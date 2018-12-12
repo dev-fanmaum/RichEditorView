@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2017 Wasabeef
+ * Copyright (C) 2015 Wasabeef
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,30 +13,77 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+"use strict";
 
 var RE = {};
 
+window.onload = function() {
+    RE.callback("ready");
+};
+
 RE.editor = document.getElementById('viewer');
 
-RE.setHtml = function(contents) {
-    RE.editor.innerHTML = decodeURIComponent(contents.replace(/\+/g, '%20'));
+//looks specifically for a Range selection and not a Caret selection
+RE.rangeSelectionExists = function() {
+    //!! coerces a null to bool
+    var sel = document.getSelection();
+    if (sel && sel.type == "Range") {
+        return true;
+    }
+    return false;
+};
+
+RE.customAction = function(action) {
+    RE.callback("action/" + action);
+};
+
+RE.updateHeight = function() {
+    RE.callback("updateHeight");
 }
+
+RE.callbackQueue = [];
+RE.runCallbackQueue = function() {
+    if (RE.callbackQueue.length === 0) {
+        return;
+    }
+    
+    setTimeout(function() {
+               window.location.href = "re-callback://";
+               }, 0);
+};
+
+RE.getCommandQueue = function() {
+    var commands = JSON.stringify(RE.callbackQueue);
+    RE.callbackQueue = [];
+    return commands;
+};
+
+RE.callback = function(method) {
+    RE.callbackQueue.push(method);
+    RE.runCallbackQueue();
+};
+
+RE.setHtml = function(contents) {
+    var tempWrapper = document.createElement('div');
+    tempWrapper.innerHTML = contents;
+    var images = tempWrapper.querySelectorAll("img");
+    
+    for (var i = 0; i < images.length; i++) {
+        images[i].onload = RE.updateHeight;
+    }
+    
+    RE.editor.innerHTML = tempWrapper.innerHTML;
+    RE.updatePlaceholder();
+};
 
 RE.getHtml = function() {
     return RE.editor.innerHTML;
-}
+};
 
 RE.getText = function() {
     return RE.editor.innerText;
-}
+};
 
-RE.setPadding = function(left, top, right, bottom) {
-  RE.editor.style.paddingLeft = left;
-  RE.editor.style.paddingTop = top;
-  RE.editor.style.paddingRight = right;
-  RE.editor.style.paddingBottom = bottom;
-}
-
-RE.setBaseFontSize = function(size) {
+RE.setFontSize = function(size) {
     RE.editor.style.fontSize = size;
-}
+};
