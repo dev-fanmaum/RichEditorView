@@ -14,30 +14,29 @@
  * limitations under the License.
  */
 
-@charset "UTF-8";
+var RE = {};
 
+RE.editor = document.getElementById('viewer');
 
-html {
-    height: 100%;
+RE.setHtml = function(contents) {
+    RE.editor.innerHTML = decodeURIComponent(contents.replace(/\+/g, '%20'));
 }
 
-body {
-    overflow: scroll;
-    display: table;
-    table-layout: fixed;
-    width: 100%;
-    min-height:100%;
+RE.getHtml = function() {
+    return RE.editor.innerHTML;
 }
 
-#editor {
-    display: table-cell;
-    outline: 0px solid transparent;
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: cover;
+RE.getText = function() {
+    return RE.editor.innerText;
 }
 
-#editor[placeholder]:empty:not(:focus):before {
-    content: attr(placeholder);
-    opacity: .5;
-}}
+RE.setPadding = function(left, top, right, bottom) {
+  RE.editor.style.paddingLeft = left;
+  RE.editor.style.paddingTop = top;
+  RE.editor.style.paddingRight = right;
+  RE.editor.style.paddingBottom = bottom;
+}
+
+RE.setBaseFontSize = function(size) {
+    RE.editor.style.fontSize = size;
+}
