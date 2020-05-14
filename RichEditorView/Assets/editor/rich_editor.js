@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- "use strict";
+"use strict";
 
 var RE = {};
 
@@ -23,10 +23,12 @@ window.onload = function() {
 
 RE.editor = document.getElementById('editor');
 
+RE.beforeCaretPos = 0;
+
 // Not universally supported, but seems to work in iOS 7 and 8
 document.addEventListener("selectionchange", function() {
-    RE.backuprange();
-});
+                          RE.backuprange();
+                          });
 
 //looks specifically for a Range selection and not a Caret selection
 RE.rangeSelectionExists = function() {
@@ -48,19 +50,19 @@ RE.rangeOrCaretSelectionExists = function() {
 };
 
 RE.editor.addEventListener("input", function() {
-    RE.updatePlaceholder();
-    RE.backuprange();
-    RE.callback("input");
-});
+                           RE.updatePlaceholder();
+                           RE.backuprange();
+                           RE.callback("input");
+                           });
 
 RE.editor.addEventListener("focus", function() {
-    RE.backuprange();
-    RE.callback("focus");
-});
+                           RE.backuprange();
+                           RE.callback("focus");
+                           });
 
 RE.editor.addEventListener("blur", function() {
-    RE.callback("blur");
-});
+                           RE.callback("blur");
+                           });
 
 RE.customAction = function(action) {
     RE.callback("action/" + action);
@@ -75,10 +77,10 @@ RE.runCallbackQueue = function() {
     if (RE.callbackQueue.length === 0) {
         return;
     }
-
+    
     setTimeout(function() {
-        window.location.href = "re-callback://";
-    }, 0);
+               window.location.href = "re-callback://";
+               }, 0);
 };
 
 RE.getCommandQueue = function() {
@@ -96,11 +98,11 @@ RE.setHtml = function(contents) {
     var tempWrapper = document.createElement('div');
     tempWrapper.innerHTML = contents;
     var images = tempWrapper.querySelectorAll("img");
-
+    
     for (var i = 0; i < images.length; i++) {
         images[i].onload = RE.updateHeight;
     }
-
+    
     RE.editor.innerHTML = tempWrapper.innerHTML;
     RE.updatePlaceholder();
 };
@@ -192,7 +194,14 @@ RE.setTextBackgroundColor = function(color) {
 };
 
 RE.setHeading = function(heading) {
-    document.execCommand('formatBlock', false, '<h' + heading + '>');
+    //    document.execCommand('formatBlock', false, '<h' + heading + '>');
+    RE.resetCaretPosition();
+    if( document.queryCommandValue('formatBlock').indexOf('h') === 0 ){
+        document.execCommand('formatBlock', false, 'p');
+    } else {
+        document.execCommand('formatBlock', false, '<h'+heading+'>');
+    }
+    //    RE.enabledEditingItems('setHeading');
 };
 
 RE.setIndent = function() {
@@ -236,7 +245,7 @@ RE.insertImage = function(url, alt) {
     img.setAttribute("src", url);
     img.setAttribute("alt", alt);
     img.onload = RE.updateHeight;
-
+    
     RE.insertHTML(img.outerHTML);
     RE.callback("input");
 };
@@ -255,11 +264,11 @@ RE.insertLink = function(url, title) {
     var sel = document.getSelection();
     if (sel.toString().length !== 0) {
         if (sel.rangeCount) {
-
+            
             var el = document.createElement("a");
             el.setAttribute("href", url);
             el.setAttribute("title", title);
-
+            
             var range = sel.getRangeAt(0).cloneRange();
             range.surroundContents(el);
             sel.removeAllRanges();
@@ -334,8 +343,8 @@ RE.blurFocus = function() {
 };
 
 /**
-Recursively search element ancestors to find a element nodeName e.g. A
-**/
+ Recursively search element ancestors to find a element nodeName e.g. A
+ **/
 var _findNodeByNameInContainer = function(element, nodeName, rootElementId) {
     if (element.nodeName == nodeName) {
         return element;
@@ -353,7 +362,7 @@ var isAnchorNode = function(node) {
 
 RE.getAnchorTagsInNode = function(node) {
     var links = [];
-
+    
     while (node.nextSibling !== null && node.nextSibling !== undefined) {
         node = node.nextSibling;
         if (isAnchorNode(node)) {
@@ -378,7 +387,7 @@ RE.getSelectedHref = function() {
     if (!RE.rangeOrCaretSelectionExists()) {
         return null;
     }
-
+    
     var tags = RE.getAnchorTagsInNode(sel.anchorNode);
     //if more than one link is there, return null
     if (tags.length > 1) {
@@ -389,7 +398,7 @@ RE.getSelectedHref = function() {
         var node = _findNodeByNameInContainer(sel.anchorNode.parentElement, 'A', 'editor');
         href = node.href;
     }
-
+    
     return href ? href : null;
 };
 
@@ -414,6 +423,19 @@ RE.getRelativeCaretYPosition = function() {
             }
         }
     }
-
+    
     return y;
 };
+
+RE.resetCaretPosition = function(){
+    var selection = window.getSelection();
+    if (selection.rangeCount > 0) {
+        var range = selection.getRangeAt(0);
+        if( range.startOffset == range.endOffset ){
+            //단일 포커스
+            RE.backuprange();
+            RE.blurFocus();
+            RE.restorerange();
+        }
+    }
+}

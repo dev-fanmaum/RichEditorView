@@ -26,6 +26,7 @@ class ViewController: UIViewController {
         editorView.delegate = self
         editorView.inputAccessoryView = toolbar
         editorView.placeholder = "Type some text..."
+        editorView.html = "dsabfkdbsaklfblksdaldflskafbkldsabfkladsbklfbdsaklfbklsal<img src=\"http://cdnetphoto.appphotocard.com/boards/18/1230927/60588/e8c7f4d31139111985b98caa2e217bb3.jpg\" alt=\"photo\"><img src=\"http://cdnetphoto.appphotocard.com/boards/18/1230927/60588/12ff23e280088e2695d21272cc6d8e6c.jpg\" alt=\"photo\">"
 
         toolbar.delegate = self
         toolbar.editor = editorView
@@ -52,6 +53,9 @@ extension ViewController: RichEditorDelegate {
         }
     }
     
+    func richEditor(_ editor: RichEditorView, heightDidChange height: Int) {
+        print("heigggggghttt \(height)")
+    }
 }
 
 extension ViewController: RichEditorToolbarDelegate {

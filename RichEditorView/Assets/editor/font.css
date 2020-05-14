@@ -1,0 +1,27 @@
+@font-face {
+ font-family: 'noto-sans-scott';
+ font-style: normal;
+ src: url('fonts/NotoSansCJKkr-Regular.eot');
+ src: url('fonts/NotoSansCJKkr-Regular.eot') format('embedded-opentype'),
+ url('fonts/NotoSansCJKkr-Regular.woff') format('woff'),
+ url('fonts/NotoSansCJKkr-Regular.otf') format('truetype');
+}
+
+@font-face {
+ font-family: 'noto-sans-scott';
+ font-style: normal;
+ src: url('fonts/NotoSansCJKkr-DemiLight.eot');
+ src: url('fonts/NotoSansCJKkr-DemiLight.eot') format('embedded-opentype'),
+ url('fonts/NotoSansCJKkr-DemiLight.woff') format('woff'),
+ url('fonts/NotoSansCJKkr-DemiLight.otf') format('truetype');
+}
+
+
+@font-face {
+ font-family: 'noto-sans-scott';
+ font-style: bold;
+ src: url('fonts/NotoSansCJKkr-Bold.eot');
+ src: url('fonts/NotoSansCJKkr-Bold.eot') format('embedded-opentype'),
+ url('fonts/NotoSansCJKkr-Bold.woff') format('woff'),
+ url('fonts/NotoSansCJKkr-Bold.otf') format('truetype');
+}
